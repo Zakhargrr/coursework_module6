@@ -39,9 +39,9 @@ class Mailing(models.Model):
 
 
 class Client(models.Model):
-    email = models.EmailField(max_length=40, verbose_name='email')
-    first_name = models.CharField(max_length=30, verbose_name='имя')
+    email = models.EmailField(max_length=40, verbose_name='email', unique=True)
     second_name = models.CharField(max_length=30, verbose_name='фамилия')
+    first_name = models.CharField(max_length=30, verbose_name='имя')
     patronymic = models.CharField(max_length=30, verbose_name='отчество')
     comment = models.TextField(null=True, blank=True, verbose_name='комментарий')
     mailings = models.ManyToManyField(Mailing, verbose_name='рассылки')
