@@ -24,11 +24,12 @@ SCHEDULE_CHOICES = [
 
 
 class Mailing(models.Model):
-    datetime = models.DateTimeField(verbose_name='дата и время')
+    message = models.ForeignKey(MailingMessage, on_delete=models.CASCADE, verbose_name='сообщение')
+    datetime_start = models.DateTimeField(verbose_name='дата и время начала')
+    datetime_finish = models.DateTimeField(verbose_name='дата и время окончания')
     schedule = models.CharField(max_length=20, choices=SCHEDULE_CHOICES, verbose_name='периодичность')
     status = models.CharField(max_length=20, default='Создана', verbose_name='статус')
     is_active = models.BooleanField(default=False, verbose_name='состояние скрипта')
-    message = models.ForeignKey(MailingMessage, on_delete=models.CASCADE, verbose_name='сообщение')
 
     def __str__(self):
         return f"{self.message}. {self.schedule} - {self.status}"

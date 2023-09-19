@@ -1,0 +1,33 @@
+{% extends 'main/base.html' %}
+{% block content %}
+<section class="py-5">
+    <div class="container px-4 px-lg-5 my-5">
+        <div class="row gx-4 gx-lg-5 align-items-center">
+            <div class="col-md-6">
+                <div class="small mb-1 bg-success text-white">&nbsp;Статус: {{object.status}}</div>
+                <h1 class="display-5 fw-bolder">Название рассылки: <br>
+                    {{object.message.title}}</h1>
+                <div class="fs-5 mb-3">
+                    <hr>
+                    Дата и время начала рассылки: {{object.datetime_start}}<br>
+
+                    Дата и время конца рассылки: {{object.datetime_finish}}
+                    <hr>
+                    Периодичность: {{object.get_schedule_display}}
+                    <hr>
+                </div>
+                <p class="lead"><strong>Текст рассылки</strong><br>{{object.message.body}}</p>
+                <div class="d-flex">
+                    <div class="text-center"><a class="btn btn-outline-dark mt-auto"
+                                                href="#">Изменить</a>
+                    </div>
+                    <div class="text-center mb-2 mb-lg-0 ms-lg-2"><a class="btn btn-outline-dark mt-auto "
+                                                href="#">Удалить</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+{% endblock %}

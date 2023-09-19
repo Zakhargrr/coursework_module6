@@ -1,0 +1,38 @@
+{% extends 'main/base.html' %}
+
+{% block content %}
+<section class="py-5">
+    <div class="container px-4 px-lg-5 my-5">
+        <div class="row gx-4 gx-lg-5 align-items-center">
+            <div class="col-md-6">
+                <h1 class="display-5 fw-bolder">Новая рассылка</h1>
+                <div class="fs-5 mb-5">
+                    <form method="post" action="" class="form-floating">
+                        {% csrf_token %}
+                        {{form.as_p}}
+                        <div class="mb-3">
+                            <p>Текст сообщения {{form.message}}</p>
+                        </div>
+                        <div class="mb-3">
+                            <label for="datetime_start">Дата и время начала</label>
+                            <input type="datetime-local" name="datetime-start"  id="datetime_start" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="datetime_finish">Дата и время окончания</label>
+                            <input type="datetime-local" name="datetime_finish-start"  id="datetime_finish" required>
+                        </div>
+                        <div class="mb-3">
+                            <p>Периодичность {{form.schedule}}</p>
+                        </div>
+
+
+                        <button type="submit" class="btn btn-outline-dark flex-shrink-0">Создать</button>
+                    </form>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+{% endblock %}
