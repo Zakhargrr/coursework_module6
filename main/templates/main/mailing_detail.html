@@ -15,14 +15,24 @@
                     <hr>
                     Периодичность: {{object.get_schedule_display}}
                     <hr>
+                    <p class="lead"><strong>Текст рассылки</strong><br>{{object.message.body}}</p>
+                    <hr>
+
+                    <strong>Клиенты</strong><br>
+                    {% for client in object.clients.all %}
+                    {{client}}
+                    <br>
+                    {% endfor %}
+
                 </div>
-                <p class="lead"><strong>Текст рассылки</strong><br>{{object.message.body}}</p>
+
+
                 <div class="d-flex">
                     <div class="text-center"><a class="btn btn-outline-dark mt-auto"
-                                                href="#">Изменить</a>
+                                                href="{% url 'main:edit_mailing' object.pk %}">Изменить</a>
                     </div>
                     <div class="text-center mb-2 mb-lg-0 ms-lg-2"><a class="btn btn-outline-dark mt-auto "
-                                                href="#">Удалить</a>
+                                                                     href="{% url 'main:delete_mailing' object.pk %}">Удалить</a>
                     </div>
                 </div>
             </div>

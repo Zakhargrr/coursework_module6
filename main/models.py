@@ -1,5 +1,7 @@
 from django.db import models
 
+from clients.models import Client
+
 
 # Create your models here.
 
@@ -27,6 +29,7 @@ class Mailing(models.Model):
     message = models.ForeignKey(MailingMessage, on_delete=models.CASCADE, verbose_name='сообщение')
     datetime_start = models.DateTimeField(verbose_name='дата и время начала')
     datetime_finish = models.DateTimeField(verbose_name='дата и время окончания')
+    clients = models.ManyToManyField(Client, verbose_name='клиенты')
     schedule = models.CharField(max_length=20, choices=SCHEDULE_CHOICES, verbose_name='периодичность')
     status = models.CharField(max_length=20, default='Создана', verbose_name='статус')
     is_active = models.BooleanField(default=False, verbose_name='состояние скрипта')
@@ -37,22 +40,6 @@ class Mailing(models.Model):
     class Meta:
         verbose_name = 'рассылка'
         verbose_name_plural = 'рассылки'
-
-
-class Client(models.Model):
-    email = models.EmailField(max_length=40, verbose_name='email', unique=True)
-    second_name = models.CharField(max_length=30, verbose_name='фамилия')
-    first_name = models.CharField(max_length=30, verbose_name='имя')
-    patronymic = models.CharField(max_length=30, verbose_name='отчество')
-    comment = models.TextField(null=True, blank=True, verbose_name='комментарий')
-    mailings = models.ManyToManyField(Mailing, verbose_name='рассылки')
-
-    def __str__(self):
-        return f"{self.first_name} {self.second_name} - {self.email}"
-
-    class Meta:
-        verbose_name = 'клиент'
-        verbose_name_plural = 'клиенты'
 
 
 class Log(models.Model):

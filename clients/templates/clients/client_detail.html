@@ -1,0 +1,30 @@
+{% extends 'main/base.html' %}
+{% block content %}
+<section class="py-5">
+    <div class="container px-4 px-lg-5 my-5">
+        <div class="row gx-4 gx-lg-5 align-items-center">
+            <div class="col-md-6">
+                <h1 class="display-5 fw-bolder">Информация о клиенте</h1>
+                <div class="fs-5 mb-3 mt-5  ">
+                    ФИО: {{object.second_name}} {{object.first_name}} {{object.patronymic}}<br>
+                    <hr>
+                    E-mail: {{object.email}}
+                    <hr>
+                    <p class="lead"><strong>Комментарий</strong><br>{{object.comment}}</p>
+                </div>
+
+
+                <div class="d-flex">
+                    <div class="text-center"><a class="btn btn-outline-dark mt-auto"
+                                                href="{% url 'clients:edit_client' object.pk %}">Изменить</a>
+                    </div>
+                    <div class="text-center mb-2 mb-lg-0 ms-lg-2"><a class="btn btn-outline-dark mt-auto "
+                                                                     href="{% url 'clients:delete_client' object.pk %}">Удалить</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+{% endblock %}

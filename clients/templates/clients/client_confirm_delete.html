@@ -1,0 +1,21 @@
+{% extends 'main/base.html' %}
+{% block content %}
+<section class="py-5">
+    <div class="container px-4 px-lg-5 my-5">
+        <div class="row gx-4 gx-lg-5 align-items-center">
+            <div class="col-md-6">
+                <h1 class="display-5 fw-bolder">Хотите удалить клиента {{object.first_name}} {{object.second_name}}?</h1>
+                <div class="fs-5 mb-5 mt-5">
+                    <form method="post" action="" class="form-floating">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-outline-dark mt-auto">Удалить</button>
+                        <a class="btn btn-outline-dark mt-auto" href="{% url 'clients:clients_list' %}">Отмена</a>
+                    </form>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+{% endblock %}
