@@ -2,6 +2,7 @@ from django.urls import reverse_lazy
 from django.views.generic import ListView, DetailView, CreateView, DeleteView, UpdateView
 
 from main.models import Mailing, MailingMessage
+from main.services import scheduled_sending, ScheduledMailings
 
 
 # Create your views here.
@@ -23,6 +24,15 @@ class MailingCreateView(CreateView):
         context_data = super().get_context_data(**kwargs)
         context_data['title'] = "Новая запись"
         return context_data
+
+    def form_valid(self, form):
+        if not ScheduledMailings.is_active:
+            ScheduledMailings.send_daily_mailings()
+            ScheduledMailings.send_weekly_mailings()
+            ScheduledMailings.send_monthly_mailings()
+            ScheduledMailings.is_active = True
+        scheduled_sending()
+        return super().form_valid(form)
 
 
 class MailingMessageCreateView(CreateView):

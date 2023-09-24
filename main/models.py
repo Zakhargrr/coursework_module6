@@ -32,7 +32,6 @@ class Mailing(models.Model):
     clients = models.ManyToManyField(Client, verbose_name='клиенты')
     schedule = models.CharField(max_length=20, choices=SCHEDULE_CHOICES, verbose_name='периодичность')
     status = models.CharField(max_length=20, default='Создана', verbose_name='статус')
-    is_active = models.BooleanField(default=False, verbose_name='состояние скрипта')
 
     def __str__(self):
         return f"{self.message}. {self.schedule} - {self.status}"

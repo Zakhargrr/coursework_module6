@@ -13,8 +13,8 @@ class MailingMessageAdmin(admin.ModelAdmin):
 
 @admin.register(Mailing)
 class MailingAdmin(admin.ModelAdmin):
-    list_display = ('message', 'datetime_start', 'datetime_finish', 'schedule', 'status', 'is_active',)
-    list_filter = ('status', 'is_active', 'clients')
+    list_display = ('message', 'datetime_start', 'datetime_finish', 'schedule', 'status',)
+    list_filter = ('status', 'clients')
 
 
 @admin.register(Log)

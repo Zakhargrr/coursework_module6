@@ -4,7 +4,13 @@
     <div class="container px-4 px-lg-5 my-5">
         <div class="row gx-4 gx-lg-5 align-items-center">
             <div class="col-md-6">
+                {% if  object.status == "Создана" %}
+                <div class="small mb-1 bg-warning text-white">&nbsp;Статус: {{object.status}}</div>
+                {% elif object.status == "Активна" %}
                 <div class="small mb-1 bg-success text-white">&nbsp;Статус: {{object.status}}</div>
+                {% else %}
+                <div class="small mb-1 bg-danger text-white">&nbsp;Статус: {{object.status}}</div>
+                {% endif %}
                 <h1 class="display-5 fw-bolder">Название рассылки: <br>
                     {{object.message.title}}</h1>
                 <div class="fs-5 mb-3">
