@@ -10,6 +10,7 @@ class ScheduledMailings:
     daily_scheduler = BackgroundScheduler()
     weekly_scheduler = BackgroundScheduler()
     monthly_scheduler = BackgroundScheduler()
+    checkup_scheduler = BackgroundScheduler()
 
     @classmethod
     def send_daily_mailings(cls):
@@ -29,6 +30,12 @@ class ScheduledMailings:
         cls.monthly_scheduler.add_job(send_clients_email, 'interval', weeks=4, args=[state])
         cls.monthly_scheduler.start()
 
+    @classmethod
+    def scheduled_checkup(cls):
+        state = 'checkup'
+        cls.checkup_scheduler.add_job(send_clients_email, 'interval', seconds=30, args=[state])
+        cls.checkup_scheduler.start()
+
 
 def scheduled_sending():
     scheduler = BackgroundScheduler()
@@ -37,9 +44,33 @@ def scheduled_sending():
     scheduler.start()
 
 
+def send_email_in_correct_time(mailing_item):
+    if datetime.now() >= mailing_item.datetime_start:
+        if datetime.now() < mailing_item.datetime_finish:
+            mailing_item.status = "Активна"
+            mailing_item.save()
+            clients = mailing_item.clients.all()
+            clients_arr = [client.email for client in clients]
+            send_mail(
+                f'{mailing_item.message.title}',
+                f'{mailing_item.message.body}',
+                'noreply@oscarbot.ru',
+                clients_arr
+            )
+
+            if not mailing_item.is_sent_by_schedule:
+                mailing_item.is_sent_by_schedule = True
+                mailing_item.save()
+        else:
+            mailing_item.status = "Завершена"
+            mailing_item.save()
+
+
 def send_clients_email(state, scheduler=None):
     if state == 'created_mailing':
+
         mailing_items_arr = [Mailing.objects.latest('pk')]
+        # print(datetime.utcnow(), datetime.now(), mailing_items_arr[0].datetime_start)
         scheduler.pause()
     elif state == 'daily_mailing':
         mailing_items_arr = Mailing.objects.filter(schedule="1D")
@@ -47,21 +78,18 @@ def send_clients_email(state, scheduler=None):
         mailing_items_arr = Mailing.objects.filter(schedule="1W")
     elif state == 'monthly_mailing':
         mailing_items_arr = Mailing.objects.filter(schedule="1M")
+    elif state == 'checkup':
+        mailing_items_arr = Mailing.objects.all()
     else:
         return
     for mailing_item in mailing_items_arr:
-        if datetime.utcnow() >= mailing_item.datetime_start:
-            if datetime.utcnow() < mailing_item.datetime_finish:
-                mailing_item.status = "Активна"
-                mailing_item.save()
-                clients = mailing_item.clients.all()
-                clients_arr = [client.email for client in clients]
-                send_mail(
-                    f'{mailing_item.message.title}',
-                    f'{mailing_item.message.body}',
-                    'noreply@oscarbot.ru',
-                    clients_arr
-                )
-            else:
+        # print(mailing_item, mailing_item.is_sent_by_schedule, type(mailing_item.is_sent_by_schedule))
+        if state == 'checkup':
+            if not mailing_item.is_sent_by_schedule:
+                send_email_in_correct_time(mailing_item)
+            if datetime.now() > mailing_item.datetime_finish:
                 mailing_item.status = "Завершена"
                 mailing_item.save()
+        else:
+            send_email_in_correct_time(mailing_item)
+

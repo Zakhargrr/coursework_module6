@@ -4,8 +4,11 @@
     <div class="container px-4 px-lg-5 my-5">
         <div class="row gx-4 gx-lg-5 align-items-center">
             <div class="col-md-6">
-                <h1 class="display-5 fw-bolder">{{title}}</h1>
-
+                {% if object %}
+                <h1 class="display-5 fw-bolder">Изменить сообщение</h1>
+                {% else %}
+                <h1 class="display-5 fw-bolder">Создать сообщение</h1>
+                {% endif %}
                 <div class="fs-5 mb-5 mt-5">
                     <form method="post" action="" class="form-floating">
                         {% csrf_token %}

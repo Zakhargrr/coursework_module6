@@ -32,6 +32,7 @@ class Mailing(models.Model):
     clients = models.ManyToManyField(Client, verbose_name='клиенты')
     schedule = models.CharField(max_length=20, choices=SCHEDULE_CHOICES, verbose_name='периодичность')
     status = models.CharField(max_length=20, default='Создана', verbose_name='статус')
+    is_sent_by_schedule = models.BooleanField(default=False, verbose_name='отправляется ли по расписанию')
 
     def __str__(self):
         return f"{self.message}. {self.schedule} - {self.status}"
@@ -45,6 +46,7 @@ class Log(models.Model):
     datetime = models.DateTimeField(auto_now_add=True, verbose_name='дата и время попытки')
     status = models.CharField(verbose_name="статус попытки")
     server_response = models.CharField(verbose_name='ответ сервера')
+    message = models.ForeignKey(MailingMessage, on_delete=models.CASCADE, verbose_name='сообщение')
 
     def __str__(self):
         return f"{self.status} {self.server_response} {self.datetime}"
