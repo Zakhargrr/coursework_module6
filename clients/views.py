@@ -2,6 +2,7 @@ from django.shortcuts import render
 from django.urls import reverse_lazy
 from django.views.generic import ListView, DetailView, CreateView, DeleteView, UpdateView
 
+from clients.forms import ClientForm
 from clients.models import Client
 
 
@@ -17,7 +18,7 @@ class ClientDetailView(DetailView):
 
 class ClientCreateView(CreateView):
     model = Client
-    fields = ('second_name', 'first_name', 'patronymic', 'email', 'comment')
+    form_class = ClientForm
     success_url = reverse_lazy('clients:clients_list')
 
     def get_context_data(self, **kwargs):
@@ -33,7 +34,7 @@ class ClientDeleteView(DeleteView):
 
 class ClientUpdateView(UpdateView):
     model = Client
-    fields = ('second_name', 'first_name', 'patronymic', 'email', 'comment')
+    form_class = ClientForm
     success_url = reverse_lazy('clients:clients_list')
 
     def get_context_data(self, **kwargs):

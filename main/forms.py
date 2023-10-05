@@ -1,7 +1,6 @@
 from django import forms
-from django.contrib.admin import widgets
 
-from main.models import Mailing
+from main.models import Mailing, MailingMessage
 
 
 class MailingForm(forms.ModelForm):
@@ -15,8 +14,18 @@ class MailingForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-
-        # self.fields['datetime_start'].widget = widgets.AdminSplitDateTime(forms.SelectDateWidget())
-        # self.fields['datetime_finish'].widget = forms.SelectDateWidget()
         for field_name, field in self.fields.items():
             field.widget.attrs['class'] = 'form-control'
+
+
+class MailingMessageForm(forms.ModelForm):
+    class Meta:
+        model = MailingMessage
+        fields = '__all__'
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        for field_name, field in self.fields.items():
+            field.widget.attrs['class'] = 'form-control'
+
+

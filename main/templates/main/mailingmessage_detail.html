@@ -1,0 +1,42 @@
+{% extends 'main/base.html' %}
+{% block content %}
+<section class="py-5">
+    <div class="container px-4 px-lg-5 my-5">
+        <div class="row gx-4 gx-lg-5 align-items-center">
+            <div class="col-md-6">
+                <h1 class="display-5 fw-bolder">{{object.title}}</h1>
+
+                <div class="fs-5 mb-3">
+                    <hr>
+                    <p class="lead"><strong>Текст рассылки</strong><br>{{object.body}}</p>
+                    <hr>
+
+                    <h2>Логи</h2>
+                    <hr>
+                    {% for log in object.log_set.all %}
+                    <strong>Дата и время:</strong> {{log.datetime}} <strong>Статус:</strong> {{log.status}}
+                    {% if log.server_response %}
+                    <strong>Ответ сервера:</strong> {{log.server_response}}
+                    {% endif %}
+                    <br>
+                    <hr>
+                    {% endfor %}
+
+
+                </div>
+
+
+                <div class="d-flex">
+                    <div class="text-center"><a class="btn btn-outline-dark mt-auto"
+                                                href="{% url 'main:edit_mailing_message' object.pk %}">Изменить</a>
+                    </div>
+                    <div class="text-center mb-2 mb-lg-0 ms-lg-2"><a class="btn btn-outline-dark mt-auto "
+                                                                     href="{% url 'main:delete_mailing_message' object.pk %}">Удалить</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+{% endblock %}

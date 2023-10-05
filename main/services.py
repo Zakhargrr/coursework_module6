@@ -1,8 +1,10 @@
+from smtplib import SMTPException
+
 from apscheduler.schedulers.background import BackgroundScheduler
 from django.core.mail import send_mail
 from datetime import datetime
 
-from main.models import Mailing
+from main.models import Mailing, Log
 
 
 class ScheduledMailings:
@@ -33,7 +35,7 @@ class ScheduledMailings:
     @classmethod
     def scheduled_checkup(cls):
         state = 'checkup'
-        cls.checkup_scheduler.add_job(send_clients_email, 'interval', seconds=30, args=[state])
+        cls.checkup_scheduler.add_job(send_clients_email, 'interval', minutes=10, args=[state])
         cls.checkup_scheduler.start()
 
 
@@ -51,12 +53,18 @@ def send_email_in_correct_time(mailing_item):
             mailing_item.save()
             clients = mailing_item.clients.all()
             clients_arr = [client.email for client in clients]
-            send_mail(
-                f'{mailing_item.message.title}',
-                f'{mailing_item.message.body}',
-                'noreply@oscarbot.ru',
-                clients_arr
-            )
+
+            try:
+                send_mail(
+                    f'{mailing_item.message.title}',
+                    f'{mailing_item.message.body}',
+                    'noreply@oscarbot.ru',
+                    clients_arr
+                )
+                Log.objects.create(datetime=datetime.now, status='Успешно', message=mailing_item.message)
+            except SMTPException as err:
+                Log.objects.create(datetime=datetime.now, status='Ошибка отправки', server_response=err,
+                                   message=mailing_item.message)
 
             if not mailing_item.is_sent_by_schedule:
                 mailing_item.is_sent_by_schedule = True
@@ -92,4 +100,3 @@ def send_clients_email(state, scheduler=None):
                 mailing_item.save()
         else:
             send_email_in_correct_time(mailing_item)
-
