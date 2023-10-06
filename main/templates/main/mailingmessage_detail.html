@@ -27,12 +27,16 @@
 
 
                 <div class="d-flex">
+                    {% if perms.main.change_mailingmessage %}
                     <div class="text-center"><a class="btn btn-outline-dark mt-auto"
                                                 href="{% url 'main:edit_mailing_message' object.pk %}">Изменить</a>
                     </div>
+                    {% endif %}
+                    {% if perms.main.delete_mailingmessage %}
                     <div class="text-center mb-2 mb-lg-0 ms-lg-2"><a class="btn btn-outline-dark mt-auto "
                                                                      href="{% url 'main:delete_mailing_message' object.pk %}">Удалить</a>
                     </div>
+                    {% endif %}
                 </div>
             </div>
         </div>

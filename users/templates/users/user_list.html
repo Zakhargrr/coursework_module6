@@ -1,11 +1,6 @@
 {% extends 'main/base.html' %}
-{% block title %}Список сообщений{% endblock %}
+{% block title %}Список пользователей{% endblock %}
 {% block content %}
-{% if perms.main.add_mailingmessage %}
-<div class="col-3 text-center mt-4">
-    <a class="btn btn-outline-dark mt-auto" href="{% url 'main:create_mailing_message' %}">Создать новое сообщение</a>
-</div>
-{% endif %}
 
 <section class="py-5">
     <div class="container px-4 px-lg-5 mt-3">
@@ -18,21 +13,25 @@
                     <div class="card-body p-4">
                         <div class="text-center">
                             <!-- Product name-->
-                            <h5 class="fw-bolder">{{object.title}}</h5>
+                            <h5 class="fw-bolder">{{object.last_name}} {{object.first_name}}</h5>
                             <!-- Product price-->
-
-                            {{object.body}}<br>
-
+                            {{object.email}}<br>
+                            <hr>
+                            {% if object.is_active %}
+                            Не забанен
+                            {% else %}
+                            Забанен
+                            {% endif %}
                         </div>
                     </div>
                     <!-- Product actions-->
-                    {% if user.is_authenticated %}
+
                     <div class="card-footer p-4 pt-0 border-top-0 bg-transparent">
                         <div class="text-center"><a class="btn btn-outline-dark mt-auto"
-                                                    href="{% url 'main:mailing_message_detail' object.pk %}">Подробнее</a>
+                                                    href="{% url 'users:ban_user' object.pk %}">Сменить статус</a>
                         </div>
                     </div>
-                    {% endif %}
+
                 </div>
             </div>
 

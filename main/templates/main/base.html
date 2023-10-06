@@ -25,7 +25,9 @@
                 <li class="nav-item"><a class="nav-link active" href="{% url 'main:mailing_messages' %}">Сообщения</a>
                 </li>
                 <li class="nav-item"><a class="nav-link active" href="{% url 'clients:clients_list' %}">Клиенты</a></li>
-
+                {% if user.is_staff %}
+                <li class="nav-item"><a class="nav-link active" href="{% url 'users:creators' %}">Пользователи</a></li>
+                {% endif %}
 
             </ul>
 

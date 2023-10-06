@@ -1,7 +1,7 @@
 {% extends 'main/base.html' %}
 {% block title %}Список клиентов{% endblock %}
 {% block content %}
-{% if user.is_authenticated %}
+{% if perms.clients.add_client %}
 <div class="col-3 text-center mt-4">
     <a class="btn btn-outline-dark mt-auto" href="{% url 'clients:create_client' %}">Создать нового клиента</a>
 </div>

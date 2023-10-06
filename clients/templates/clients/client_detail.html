@@ -15,12 +15,16 @@
 
 
                 <div class="d-flex">
+                    {% if perms.clients.change_client %}
                     <div class="text-center"><a class="btn btn-outline-dark mt-auto"
                                                 href="{% url 'clients:edit_client' object.pk %}">Изменить</a>
                     </div>
+                    {% endif %}
+                    {% if perms.clients.delete_client %}
                     <div class="text-center mb-2 mb-lg-0 ms-lg-2"><a class="btn btn-outline-dark mt-auto "
                                                                      href="{% url 'clients:delete_client' object.pk %}">Удалить</a>
                     </div>
+                    {% endif %}
                 </div>
             </div>
         </div>

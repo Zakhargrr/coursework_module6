@@ -1,7 +1,9 @@
 from django.contrib.auth.views import LoginView
 from django.core.mail import send_mail
+from django.http import Http404
+from django.shortcuts import redirect
 from django.urls import reverse_lazy, reverse
-from django.views.generic import CreateView, UpdateView
+from django.views.generic import CreateView, UpdateView, ListView
 
 from users.forms import UserRegisterForm, UserProfileForm, UserLoginForm
 from users.models import User
@@ -48,3 +50,25 @@ class ProfileView(UpdateView):
 
 class CustomLoginView(LoginView):
     form_class = UserLoginForm
+
+
+class UserListView(ListView):
+    model = User
+
+    def get_queryset(self):
+        if not self.request.user.is_staff:
+            raise Http404
+        return super().get_queryset()
+
+
+def ban_user(request, pk):
+    if not request.user.is_staff:
+        raise Http404
+    user = User.objects.get(pk=pk)
+    if not user.is_active:
+        user.is_active = True
+    else:
+        user.is_active = False
+    user.save()
+    return redirect(reverse('users:creators'))
+

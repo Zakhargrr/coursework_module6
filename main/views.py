@@ -1,12 +1,14 @@
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 from django.http import Http404
-from django.urls import reverse_lazy
+from django.shortcuts import redirect
+from django.urls import reverse_lazy, reverse
 from django.views.generic import ListView, DetailView, CreateView, DeleteView, UpdateView
 
 from main.models import Mailing, MailingMessage
 from main.services import scheduled_sending, ScheduledMailings
 from main.forms import MailingForm, MailingMessageForm
+from users.models import User
 
 
 # Create your views here.
@@ -16,17 +18,19 @@ class MailingListView(LoginRequiredMixin, ListView):
     model = Mailing
 
     def get_queryset(self):
-        return super().get_queryset().filter(
-            owner=self.request.user
-        )
+        queryset = super().get_queryset()
+        if not self.request.user.is_staff:
+            queryset = queryset.filter(owner=self.request.user)
+        return queryset
 
 
 class MailingDetailView(DetailView):
     model = Mailing
 
 
-class MailingCreateView(CreateView):
+class MailingCreateView(PermissionRequiredMixin, CreateView):
     model = Mailing
+    permission_required = 'main.add_mailing'
     form_class = MailingForm
     success_url = reverse_lazy('main:mailings')
 
@@ -57,13 +61,15 @@ class MailingCreateView(CreateView):
         return super().form_valid(form)
 
 
-class MailingDeleteView(DeleteView):
+class MailingDeleteView(PermissionRequiredMixin, DeleteView):
     model = Mailing
+    permission_required = 'main.delete_mailing'
     success_url = reverse_lazy('main:mailings')
 
 
-class MailingUpdateView(UpdateView):
+class MailingUpdateView(PermissionRequiredMixin, UpdateView):
     model = Mailing
+    permission_required = 'main.change_mailing'
     form_class = MailingForm
     success_url = reverse_lazy('main:mailings')
 
@@ -78,18 +84,21 @@ class MailingMessageListView(LoginRequiredMixin, ListView):
     model = MailingMessage
 
     def get_queryset(self):
-        return super().get_queryset().filter(
-            owner=self.request.user
-        )
+        queryset = super().get_queryset()
+        if not self.request.user.is_staff:
+            queryset = queryset.filter(owner=self.request.user)
+        return queryset
 
 
-class MailingMessageDeleteView(DeleteView):
+class MailingMessageDeleteView(PermissionRequiredMixin, DeleteView):
     model = MailingMessage
+    permission_required = 'main.delete_mailingmessage'
     success_url = reverse_lazy('main:mailing_messages')
 
 
-class MailingMessageCreateView(CreateView):
+class MailingMessageCreateView(PermissionRequiredMixin, CreateView):
     model = MailingMessage
+    permission_required = 'main.add_mailingmessage'
     form_class = MailingMessageForm
     success_url = reverse_lazy('main:mailing_messages')
 
@@ -101,8 +110,9 @@ class MailingMessageCreateView(CreateView):
         return super().form_valid(form)
 
 
-class MailingMessageUpdateView(UpdateView):
+class MailingMessageUpdateView(PermissionRequiredMixin, UpdateView):
     model = MailingMessage
+    permission_required = 'main.change_mailingmessage'
     form_class = MailingMessageForm
     success_url = reverse_lazy('main:mailing_messages')
 
@@ -115,3 +125,12 @@ class MailingMessageUpdateView(UpdateView):
 
 class MailingMessageDetailView(DetailView):
     model = MailingMessage
+
+
+def stop_mailing(request, pk):
+    if not request.user.is_staff:
+        raise Http404
+    user = Mailing.objects.get(pk=pk)
+    user.status = "Завершена"
+    user.save()
+    return redirect(reverse('main:mailings'))

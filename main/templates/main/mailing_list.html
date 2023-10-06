@@ -1,7 +1,7 @@
 {% extends 'main/base.html' %}
 {% block title %}Список рассылок{% endblock %}
 {% block content %}
-{% if user.is_authenticated %}
+{% if perms.main.add_mailing %}
 <div class="col-3 text-center mt-4">
     <a class="btn btn-outline-dark mt-auto" href="{% url 'main:create_mailing' %}">Создать новую рассылку</a>
 </div>
@@ -36,6 +36,11 @@
                         <div class="text-center"><a class="btn btn-outline-dark mt-auto"
                                                     href="{% url 'main:mailing_detail' object.pk %}">Подробнее</a>
                         </div>
+                        {% if user.is_staff and object.status != "Завершена" %}
+                        <div class="text-center"><a class="btn btn-outline-dark mt-1"
+                                                    href="{% url 'main:stop_mailing' object.pk %}">Остановить</a>
+                        </div>
+                        {% endif %}
                     </div>
                 </div>
             </div>
