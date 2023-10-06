@@ -1,9 +1,11 @@
 {% extends 'main/base.html' %}
 {% block title %}Список рассылок{% endblock %}
 {% block content %}
+{% if user.is_authenticated %}
 <div class="col-3 text-center mt-4">
     <a class="btn btn-outline-dark mt-auto" href="{% url 'main:create_mailing' %}">Создать новую рассылку</a>
 </div>
+{% endif %}
 
 <section class="py-5">
     <div class="container px-4 px-lg-5 mt-3">

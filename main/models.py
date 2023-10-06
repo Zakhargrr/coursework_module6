@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.db import models
 
 from clients.models import Client
@@ -9,6 +10,8 @@ from clients.models import Client
 class MailingMessage(models.Model):
     title = models.CharField(max_length=40, verbose_name='заголовок')
     body = models.TextField(verbose_name='тело письма')
+    owner = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, blank=True,
+                              verbose_name='владелец')
 
     def __str__(self):
         return f"{self.title}"
@@ -24,6 +27,11 @@ SCHEDULE_CHOICES = [
     ("1M", "Раз в месяц"),
 ]
 
+STATUS_CHOICES = [
+    ("Создана", "Создана"),
+    ("Активна", "Активна"),
+    ("Завершена", "Завершена"),
+]
 
 class Mailing(models.Model):
     message = models.ForeignKey(MailingMessage, on_delete=models.CASCADE, verbose_name='сообщение')
@@ -31,8 +39,10 @@ class Mailing(models.Model):
     datetime_finish = models.DateTimeField(verbose_name='дата и время окончания')
     clients = models.ManyToManyField(Client, verbose_name='клиенты')
     schedule = models.CharField(max_length=20, choices=SCHEDULE_CHOICES, verbose_name='периодичность')
-    status = models.CharField(max_length=20, default='Создана', verbose_name='статус')
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='Создана', verbose_name='статус')
     is_sent_by_schedule = models.BooleanField(default=False, verbose_name='отправляется ли по расписанию')
+    owner = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, blank=True,
+                              verbose_name='владелец')
 
     def __str__(self):
         return f"{self.message}. {self.schedule} - {self.status}"

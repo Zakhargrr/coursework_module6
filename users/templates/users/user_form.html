@@ -1,0 +1,45 @@
+{% extends 'main/base.html' %}
+{% block content %}
+<section class="py-5">
+    <div class="container px-4 px-lg-5 my-5">
+        <div class="row gx-4 gx-lg-5 align-items-center">
+            <div class="col-md-6">
+                <h1 class="display-5 fw-bolder">Информация о пользователе</h1>
+
+                <div class="fs-5 mb-5 mt-5">
+                    <form method="post" enctype="multipart/form-data" action="" class="form-floating">
+                        {% csrf_token %}
+                        <p>
+                            Email:
+                            {{form.email}}
+                            <br>
+                            Имя:
+                            {{form.first_name}}
+                            <br>
+                            Фамилия:
+                            {{form.last_name}}
+                            <br>
+                            Номер телефона:
+                            {{form.phone}}
+                            <br>
+                            Аватар:
+                            {{form.avatar}}
+
+                            {% if not user.is_verified %}
+                            <br>
+                            Ключ верификации:
+                            {{form.user_key}}
+                            {% endif %}
+                        </p>
+                        <button type="submit" class="btn btn-outline-dark mt-3">
+                            Подтвердить
+                        </button>
+                    </form>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+{% endblock %}

@@ -49,26 +49,27 @@ def scheduled_sending():
 def send_email_in_correct_time(mailing_item):
     if datetime.now() >= mailing_item.datetime_start:
         if datetime.now() < mailing_item.datetime_finish:
-            mailing_item.status = "Активна"
-            mailing_item.save()
-            clients = mailing_item.clients.all()
-            clients_arr = [client.email for client in clients]
-
-            try:
-                send_mail(
-                    f'{mailing_item.message.title}',
-                    f'{mailing_item.message.body}',
-                    'noreply@oscarbot.ru',
-                    clients_arr
-                )
-                Log.objects.create(datetime=datetime.now, status='Успешно', message=mailing_item.message)
-            except SMTPException as err:
-                Log.objects.create(datetime=datetime.now, status='Ошибка отправки', server_response=err,
-                                   message=mailing_item.message)
-
-            if not mailing_item.is_sent_by_schedule:
-                mailing_item.is_sent_by_schedule = True
+            if mailing_item.status != "Завершена":
+                mailing_item.status = "Активна"
                 mailing_item.save()
+                clients = mailing_item.clients.all()
+                clients_arr = [client.email for client in clients]
+
+                try:
+                    send_mail(
+                        f'{mailing_item.message.title}',
+                        f'{mailing_item.message.body}',
+                        'noreply@oscarbot.ru',
+                        clients_arr
+                    )
+                    Log.objects.create(datetime=datetime.now, status='Успешно', message=mailing_item.message)
+                except SMTPException as err:
+                    Log.objects.create(datetime=datetime.now, status='Ошибка отправки', server_response=err,
+                                       message=mailing_item.message)
+
+                if not mailing_item.is_sent_by_schedule:
+                    mailing_item.is_sent_by_schedule = True
+                    mailing_item.save()
         else:
             mailing_item.status = "Завершена"
             mailing_item.save()
@@ -94,9 +95,11 @@ def send_clients_email(state, scheduler=None):
         # print(mailing_item, mailing_item.is_sent_by_schedule, type(mailing_item.is_sent_by_schedule))
         if state == 'checkup':
             if not mailing_item.is_sent_by_schedule:
-                send_email_in_correct_time(mailing_item)
+                if mailing_item.status != "Завершена":
+                    send_email_in_correct_time(mailing_item)
             if datetime.now() > mailing_item.datetime_finish:
                 mailing_item.status = "Завершена"
                 mailing_item.save()
         else:
-            send_email_in_correct_time(mailing_item)
+            if mailing_item.status != "Завершена":
+                send_email_in_correct_time(mailing_item)
