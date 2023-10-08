@@ -1,0 +1,41 @@
+{% extends 'main/base.html' %}
+{% block title %}Главная{% endblock %}
+{% block content %}
+{% load custom_tags %}
+
+<section class="py-5">
+    <div class="container px-4 px-lg-5 mt-1">
+        <div class="row">
+            <div class="col-3">
+                <h2>Ваша статистика:</h2>
+                <p>
+                    Рассылок всего: {{mailings_count}}
+                    <br>
+                    Активных расссылок: {{active_mailings_count}}
+                    <br>
+                    Клиентов: {{clients_count}}
+                </p>
+            </div>
+            {% for blog in blogs_list %}
+            <div class="col-3">
+                <div class="text-center">
+                    <div class="card mb-4 box-shadow">
+                        <div class="card-header">
+                            <h4 class="my-0 font-weight-normal">{{blog.title}}</h4>
+                        </div>
+                        <img src="{% previews_mediapath blog.image %}"/>
+                        <div class="card-body">
+                            <h3 class="card-title pricing-card-title">{{blog.views_count}} просмотров</h3>
+                            <ul class="list-unstyled mt-3 mb-4 text-start m-3">
+                                {{blog.content|split}}
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+</section>
+{% endblock %}

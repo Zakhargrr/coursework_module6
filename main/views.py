@@ -1,17 +1,37 @@
+from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
+from django.core.cache import cache
 from django.http import Http404
-from django.shortcuts import redirect
+from django.shortcuts import redirect, render
 from django.urls import reverse_lazy, reverse
 from django.views.generic import ListView, DetailView, CreateView, DeleteView, UpdateView
 
+from blogs.models import Blog
+from clients.models import Client
 from main.models import Mailing, MailingMessage
 from main.services import scheduled_sending, ScheduledMailings
 from main.forms import MailingForm, MailingMessageForm
-from users.models import User
 
 
 # Create your views here.
+@login_required
+def main_page(request):
+    if settings.CACHE_ENABLED:
+        blogs_list = cache.get('blogs_list')
+        if blogs_list is None:
+            blogs_list = Blog.objects.all()[len(Blog.objects.all()) - 3:]
+            cache.set('blogs_list', blogs_list)
+
+    else:
+        blogs_list = Blog.objects.all()[len(Blog.objects.all()) - 3:]
+    context = {
+        'blogs_list': blogs_list,
+        'mailings_count': Mailing.objects.filter(owner=request.user).count(),
+        'active_mailings_count': Mailing.objects.filter(owner=request.user).filter(status='Активна').count(),
+        'clients_count': Client.objects.filter(owner=request.user).count(),
+    }
+    return render(request, 'main/main.html', context)
 
 
 class MailingListView(LoginRequiredMixin, ListView):
